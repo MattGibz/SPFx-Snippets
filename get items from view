@@ -1,0 +1,33 @@
+private _getView(requestor: SPHttpClient){
+    const query = `${this._webPartContext.pageContext.web.absoluteUrl}/_api/web/lists/(guid'${this.selectedList.Id}')/views/getbytitle('Categories')/ViewQuery`;
+    return requestor.get(query, SPHttpClient.configurations.v1)
+        .then((response: SPHttpClientResponse) =>{
+            return response.json();
+        })
+        .then((json: any) => {
+            return json.value;
+        });
+}
+
+this._getView(requestor)
+    .then((query: any) =>{
+        var viewXml = `<View><Query>${query}</Query></View>`;
+        var url = `${this._webPartContext.pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('Collapse Lib')/getitems`;
+        const payload: ISPHttpClientOptions = {
+            headers: {'odata-version':'3.0'},
+            body: `{
+                'query':{
+                    '__metadata': {'type': 'SP.CamlQuery'},
+                    'ViewXml': '${viewXml}'
+                }
+            }`
+        }
+        return requestor.post(url, SPHttpClient.configurations.v1, payload)
+            .then((response: SPHttpClientResponse) =>{
+                return response.json();
+            })
+            .then((json: any) =>{
+                var items: any[] = json.value;
+                return items;
+            });
+    });
