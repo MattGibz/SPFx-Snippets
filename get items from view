@@ -1,5 +1,5 @@
 private _getView(requestor: SPHttpClient){
-    const query = `${this._webPartContext.pageContext.web.absoluteUrl}/_api/web/lists/(guid'${this.selectedList.Id}')/views/getbytitle('Categories')/ViewQuery`;
+    const query = `${this._webPartContext.pageContext.web.absoluteUrl}/_api/web/lists(guid'${this.selectedList.Id}')/views/getbytitle('Categories')/ViewQuery`;
     return requestor.get(query, SPHttpClient.configurations.v1)
         .then((response: SPHttpClientResponse) =>{
             return response.json();
